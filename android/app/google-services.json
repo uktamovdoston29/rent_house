@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "777847042850",
+    "project_id": "house-rent-bc97b",
+    "storage_bucket": "house-rent-bc97b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777847042850:android:840597a8c1feb2d8792b7b",
+        "android_client_info": {
+          "package_name": "com.kevin.rent_house"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777847042850-ghvpuisbgcjel7ug7lt8007d2mp4hto8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kevin.rent_house",
+            "certificate_hash": "3b9ce84d3f0f45aaf6bbba2b38018a4691775dda"
+          }
+        },
+        {
+          "client_id": "777847042850-u7c91o79qr0h4g6t1ugmtajdag1t0fb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTe5P4R0XaGHoxdUkDq_MOh-Qa14xV7fY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "777847042850-u7c91o79qr0h4g6t1ugmtajdag1t0fb8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "777847042850-1g5uuevsbt50m9ukrppa881t0th4ftfu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kevin.rentHouse"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
