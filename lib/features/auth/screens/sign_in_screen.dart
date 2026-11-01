@@ -23,18 +23,22 @@ class _SignInScreenState extends State<SignInScreen> {
   bool rememberMe = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           print("Xolat o`zgardi $state");
@@ -44,8 +48,11 @@ class _SignInScreenState extends State<SignInScreen> {
             isButoonPressed.value = false;
           }
           if (state is AuthSuccessState) {
+            isButoonPressed.value = false;
             _emailController.clear();
             _passwordController.clear();
+            _firstNameController.clear();
+            _lastNameController.clear();
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -59,8 +66,11 @@ class _SignInScreenState extends State<SignInScreen> {
               (_) => false,
             );
           } else if (state is AuthErrorState) {
+            isButoonPressed.value = false;
             _emailController.clear();
             _passwordController.clear();
+            _firstNameController.clear();
+            _lastNameController.clear();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red,
@@ -70,12 +80,12 @@ class _SignInScreenState extends State<SignInScreen> {
           }
         },
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 72),
+                SizedBox(height: 48),
                 Text(
                   "Welcome Back !",
                   style: GoogleFonts.inter(
@@ -106,6 +116,18 @@ class _SignInScreenState extends State<SignInScreen> {
                     }
                     return Column(
                       children: [
+                        AuthInputWidget(
+                          controller: _firstNameController,
+                          title: 'Ism',
+                          keyboardType: TextInputType.name,
+                        ),
+                        SizedBox(height: 16),
+                        AuthInputWidget(
+                          controller: _lastNameController,
+                          title: 'Familya',
+                          keyboardType: TextInputType.name,
+                        ),
+                        SizedBox(height: 16),
                         AuthInputWidget(
                           controller: _emailController,
                           errorMessage: errorMessage,
@@ -178,10 +200,13 @@ class _SignInScreenState extends State<SignInScreen> {
                         BlocBuilder<AuthCubit, AuthState>(
                           builder: (context, state) {
                             return AppButonWidget(
+                              isLoading: state is AuthLoadingState,
                               onTap: () {
                                 context.read<AuthCubit>().signIn(
                                   email: _emailController.text,
                                   password: _passwordController.text,
+                                  firstName: _firstNameController.text,
+                                  lastName: _lastNameController.text,
                                 );
                               },
                               text: 'Sign In',

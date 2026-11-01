@@ -5,21 +5,21 @@ abstract class OnboardState {}
 class OnboardSuccessState extends OnboardState {
   static List<Map<String, dynamic>> source = [
     {
-      "title": "Find the perfect place for your future house",
+      "title": "House Rent — kelajakdagi uyingizni toping",
       "description":
-          "find the best place for your dream house with your family and loved ones",
+          "Oilangiz va yaqinlaringiz bilan yashash uchun eng qulay ijara uylarini toping",
       "image": Assets.images.first,
     },
     {
-      "title": "Fast sell your property in just one click",
+      "title": "Mulkingizni bir bosishda soting",
       "description":
-          "Simplify the property sales process with just your smartphone",
+          "Uy sotish jarayonini faqat smartfoningiz orqali soddalashtiring",
       "image": Assets.images.second,
     },
     {
-      "title": "find your dream home with us",
+      "title": "Orzuingizdagi uyni biz bilan toping",
       "description":
-          "Just search and select your favorite property you want to locate",
+          "Sevimli mulkingizni qidiring va joylashuvini tanlang",
       "image": Assets.images.third,
     },
   ];

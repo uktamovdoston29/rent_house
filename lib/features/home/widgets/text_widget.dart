@@ -22,7 +22,7 @@ class TextsWidget extends StatelessWidget {
         TextButton(
           onPressed: () {},
           child: Text(
-            'See all',
+            'Barchasi',
             style: GoogleFonts.inter(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
           ),
         ),

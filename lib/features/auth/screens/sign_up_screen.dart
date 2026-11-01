@@ -22,13 +22,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool agree = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _usernameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
   }
 
   @override
@@ -46,10 +48,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           print("Xolat o`zgardi $state");
+          if (state is AuthLoadingState) {
+            isButoonPressed.value = true;
+          }
           if (state is AuthSuccessState) {
+            isButoonPressed.value = false;
             _emailController.clear();
             _passwordController.clear();
-            _usernameController.clear();
+            _firstNameController.clear();
+            _lastNameController.clear();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.green,
@@ -61,21 +68,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
               MaterialPageRoute(builder: (context) => Mainscreen()),
               (_) => false,
             );
-          } else if (state is AuthErrorState) {
+          } else if (state is AuthErrorState || state is AuthGoogleErrorState) {
+            isButoonPressed.value = false;
             _emailController.clear();
             _passwordController.clear();
-            _usernameController.clear();
+            _firstNameController.clear();
+            _lastNameController.clear();
+            final errorText = state is AuthErrorState
+                ? state.errorText
+                : (state as AuthGoogleErrorState).errorText;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red,
-                content: Text(state.errorText ?? "Something went wrong"),
+                content: Text(errorText ?? "Something went wrong"),
               ),
             );
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -107,6 +120,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return Column(
                     children: [
                       AuthInputWidget(
+                        controller: _firstNameController,
+                        title: "Ism",
+                        keyboardType: TextInputType.name,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: AuthInputWidget(
+                          controller: _lastNameController,
+                          title: "Familya",
+                          keyboardType: TextInputType.name,
+                        ),
+                      ),
+                      AuthInputWidget(
                         controller: _emailController,
                         errorMessage: errorMessage,
                         title: "Email",
@@ -116,21 +142,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.only(top: 16, bottom: 16),
                         child: AuthInputWidget(
-                          controller: _usernameController,
-                          title: "Username",
-                          keyboardType: TextInputType.name,
+                          controller: _passwordController,
+                          title: "Password",
+                          keyboardType: TextInputType.numberWithOptions(),
+                          errorMessage: errorNumber,
+                          onChanged: (value) {
+                            context.read<AuthCubit>().validatePassword(value);
+                          },
                         ),
-                      ),
-                      AuthInputWidget(
-                        controller: _passwordController,
-                        title: "Password",
-                        keyboardType: TextInputType.numberWithOptions(),
-                        errorMessage: errorNumber,
-                        onChanged: (value) {
-                          context.read<AuthCubit>().validatePassword(value);
-                        },
                       ),
                       Row(
                         children: [
@@ -164,10 +185,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
                   return AppButonWidget(
+                    isLoading: state is AuthLoadingState,
                     onTap: () {
                       context.read<AuthCubit>().signUp(
                         email: _emailController.text,
                         password: _passwordController.text,
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
                       );
                     },
                     text: 'Sign Up',
@@ -205,6 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
               ),
             ],
+            ),
           ),
         ),
       ),

@@ -50,7 +50,7 @@ class _RecommendedHousesState extends State<RecommendedHouses> {
                         height: double.infinity,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Text('No image'),
+                            const Text('Rasm yo‘q'),
                       ),
                     ),
                     Positioned(
@@ -75,7 +75,7 @@ class _RecommendedHousesState extends State<RecommendedHouses> {
                             ),
                             children: [
                               TextSpan(
-                                text: '/month',
+                                text: '/oy',
                                 style: TextStyle(
                                   color: AppColors.secondaryblack,
                                   fontSize: 10,

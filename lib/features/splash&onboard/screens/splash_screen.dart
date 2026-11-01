@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rent_house/core/color/app_colors.dart';
 import 'package:rent_house/core/gen/assets.gen.dart';
-import 'package:rent_house/features/map/screens/location_permision_screen.dart';
 import 'package:rent_house/features/splash&onboard/screens/onboard_screen.dart';
-import 'package:rent_house/utils/services/location_service.dart';
 
 class SpalshScreen extends StatefulWidget {
   const SpalshScreen({super.key});
@@ -28,10 +27,33 @@ class _SpalshScreenState extends State<SpalshScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          height: 158,
-          width: 137,
-          child: Column(children: [Assets.images.mainLogo.image()]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 158,
+              width: 137,
+              child: Assets.images.mainLogo.image(),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              "House Rent",
+              style: GoogleFonts.inter(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: AppColors.secondaryblack,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Uy ijarasi platformasi",
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.grey,
+              ),
+            ),
+          ],
         ),
       ),
     );

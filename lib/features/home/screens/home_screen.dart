@@ -9,65 +9,136 @@ import 'package:rent_house/features/home/cubit/cubit/home_state.dart';
 import 'package:rent_house/features/home/widgets/nearby_house_widget.dart';
 import 'package:rent_house/features/home/widgets/recommended_house.dart';
 import 'package:rent_house/features/home/widgets/text_widget.dart';
+import 'package:rent_house/utils/services/location_service.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _DescriptionScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _DescriptionScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
+  final LocationService _locationService = LocationService();
+  String _shortName = 'Joylashuv';
+  String _address = 'Manzil aniqlanmoqda...';
+  bool _isLocating = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserLocation();
+    });
+  }
+
+  Future<void> _loadUserLocation() async {
+    setState(() {
+      _isLocating = true;
+      _address = 'Manzil aniqlanmoqda...';
+    });
+
+    try {
+      final place = await _locationService.resolveCurrentPlace();
+      if (!mounted) return;
+      setState(() {
+        _shortName = place.shortName;
+        _address = place.address;
+        _isLocating = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      final message = error.toString();
+      setState(() {
+        _isLocating = false;
+        if (message.contains('permission-denied-forever')) {
+          _shortName = 'Ruxsat yo‘q';
+          _address = 'Sozlamalardan joylashuv ruxsatini yoqing';
+        } else if (message.contains('permission-denied')) {
+          _shortName = 'Ruxsat yo‘q';
+          _address = 'Joylashuv ruxsatini bering';
+        } else if (message.contains('location-disabled')) {
+          _shortName = 'GPS o‘chiq';
+          _address = 'Qurilmada joylashuv xizmatini yoqing';
+        } else {
+          _shortName = 'Joylashuv';
+          _address = 'Manzilni aniqlab bo‘lmadi';
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        toolbarHeight: 70,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 24),
+        toolbarHeight: 82,
+        titleSpacing: 24,
+        title: InkWell(
+          onTap: _loadUserLocation,
+          borderRadius: BorderRadius.circular(8),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Location",
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    icon: SvgPicture.asset(Assets.icons.down),
-                    color: AppColors.primary,
-                  ),
-                ],
+              Text(
+                'Joylashuv',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey,
+                ),
               ),
+              const SizedBox(height: 2),
               Row(
                 children: [
                   SvgPicture.asset(
                     Assets.icons.destination,
-                    color: AppColors.primary,
-                  ),
-                  Text(
-                    "Yogyakarta, Ind",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
                     ),
                   ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: _isLocating
+                        ? Text(
+                            'Aniqlanmoqda...',
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        : Text(
+                            _shortName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                  Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primary),
                 ],
+              ),
+              Text(
+                _address,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.grey,
+                ),
               ),
             ],
           ),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.only(right: 24),
             child: Row(
               children: [
                 CircleAvatar(
@@ -75,7 +146,7 @@ class _DescriptionScreenState extends State<HomeScreen> {
                   backgroundColor: AppColors.secondarygrey,
                   child: SvgPicture.asset(Assets.icons.notification),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 22,
                   backgroundColor: AppColors.secondarygrey,
@@ -91,7 +162,7 @@ class _DescriptionScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               Container(
                 height: 52,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,11 +174,11 @@ class _DescriptionScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     SvgPicture.asset(Assets.icons.search),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: "Search Property",
+                          hintText: 'Uy qidirish',
                           hintStyle: GoogleFonts.inter(
                             fontSize: 14,
                             color: Colors.grey.shade400,
@@ -117,32 +188,32 @@ class _DescriptionScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     SvgPicture.asset(Assets.icons.filter),
                   ],
                 ),
               ),
-              SizedBox(height: 22),
-              Container(
+              const SizedBox(height: 22),
+              SizedBox(
                 height: 110,
                 width: double.infinity,
                 child: Assets.images.ads.image(),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Row(
                 children: [
                   Text(
-                    "Recommended",
+                    'Tavsiya etilgan',
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      "See all",
+                      'Barchasi',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -157,19 +228,27 @@ class _DescriptionScreenState extends State<HomeScreen> {
                   if (state is HomeErrorState) {
                     return Row(
                       children: [
-                        SizedBox(width: 300,child: Text(state.error, maxLines: 3,)),
-                        IconButton(onPressed: () {}, icon: Icon(Icons.refresh)),
+                        SizedBox(
+                          width: 300,
+                          child: Text(state.error, maxLines: 3),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            context.read<HomeCubit>().getHouses();
+                          },
+                          icon: const Icon(Icons.refresh),
+                        ),
                       ],
                     );
                   } else if (state is HomeSuccessState) {
                     return Column(
                       children: [
                         RecommendedHouses(data: state.houses),
-                        SizedBox(height: 24),
-                        TextsWidget(text: 'Nearby'),
-                        SizedBox(height: 16),
-                        NearbyHouses(),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 24),
+                        const TextsWidget(text: 'Yaqin-atrofda'),
+                        const SizedBox(height: 16),
+                        const NearbyHouses(),
+                        const SizedBox(height: 30),
                       ],
                     );
                   } else if (state is HomeLoadingState) {
@@ -188,7 +267,7 @@ class _DescriptionScreenState extends State<HomeScreen> {
                               child: Container(
                                 width: 225,
                                 height: 165,
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                               ),
                             ),
                           );
@@ -196,7 +275,7 @@ class _DescriptionScreenState extends State<HomeScreen> {
                       ),
                     );
                   } else {
-                    return SizedBox();
+                    return const SizedBox();
                   }
                 },
               ),

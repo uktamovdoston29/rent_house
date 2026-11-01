@@ -34,7 +34,12 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signUp({required String email, required String password}) async {
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
     emit(AuthLoadingState());
     try {
       final result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -42,6 +47,11 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
       if (result.user != null) {
+        final fullName = '${firstName.trim()} ${lastName.trim()}'.trim();
+        if (fullName.isNotEmpty) {
+          await result.user!.updateDisplayName(fullName);
+          await FirebaseAuth.instance.currentUser?.reload();
+        }
         emit(AuthSuccessState());
       } else {
         throw FirebaseAuthException(
@@ -69,7 +79,12 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signIn({required String email, required String password}) async {
+  Future<void> signIn({
+    required String email,
+    required String password,
+    String? firstName,
+    String? lastName,
+  }) async {
     emit(AuthLoadingState());
     try {
       final result = await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -78,6 +93,12 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       if (result.user != null) {
+        final fullName = '${firstName?.trim() ?? ''} ${lastName?.trim() ?? ''}'
+            .trim();
+        if (fullName.isNotEmpty) {
+          await result.user!.updateDisplayName(fullName);
+          await FirebaseAuth.instance.currentUser?.reload();
+        }
         emit(AuthSuccessState());
       } else {
         throw FirebaseException(plugin: "Try again ");

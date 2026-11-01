@@ -104,7 +104,7 @@ class NearbyHouses extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "\$${data[index].price}/month",
+                                    "\$${data[index].price}/oy",
                                     style: GoogleFonts.inter(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,

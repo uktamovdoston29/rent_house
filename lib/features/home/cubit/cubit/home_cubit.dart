@@ -24,15 +24,15 @@ class HomeCubit extends Cubit<HomeState> {
       emit(HomeSuccessState(houses: data));
     } on FirebaseException catch (e) {
       print('Firebase exception $e');
-      emit(HomeErrorState(error: e.message ?? 'Server error'));
+      emit(HomeErrorState(error: e.message ?? 'Server xatosi'));
     } on SocketException catch (_) {
       emit(
-        HomeErrorState(error: 'Check your internet connection and try again !'),
+        HomeErrorState(error: 'Internetni tekshiring va qayta urinib ko‘ring'),
       );
     } on TimeoutException catch (_) {
-      emit(HomeErrorState(error: 'Server might be down, try again'));
+      emit(HomeErrorState(error: 'Server javob bermadi, qayta urinib ko‘ring'));
     } catch (error) {
-      emit(HomeErrorState(error: 'Something went wrong'));
+      emit(HomeErrorState(error: 'Xatolik yuz berdi'));
     }
   }
 }
